@@ -160,7 +160,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Start ---
 app.listen(PORT, () => {
-  console.log(`Partner demo running at http://localhost:${PORT}`);
+  console.log(`Tenalet Kit demo running at http://localhost:${PORT}`);
   console.log(`  API proxy → ${API_URL}`);
   console.log(`  App URL   → ${APP_URL}`);
 });

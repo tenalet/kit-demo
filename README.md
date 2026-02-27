@@ -1,4 +1,4 @@
-# Tenalet Partner Demo
+# Tenalet Kit Demo
 
 Reference implementation and testing environment for the Tenalet Partner SDK. Demonstrates property creation, embedded tenant screening, report access, and webhook handling.
 
