@@ -48,6 +48,28 @@ nav .brand {
   text-decoration: none;
 }
 
+nav .mode-badge {
+  display: none;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+nav .mode-badge.mode-test {
+  display: inline-block;
+  background: #fbbf24;
+  color: #78350f;
+}
+
+nav .mode-badge.mode-live {
+  display: inline-block;
+  background: #22c55e;
+  color: #052e16;
+}
+
 nav a {
   color: #aaa;
   text-decoration: none;
@@ -383,6 +405,7 @@ textarea {
   color: #dc2626;
   font-size: 13px;
   margin-top: 8px;
+  white-space: pre-line;
 }
 
 .mt-16 {
@@ -410,7 +433,7 @@ textarea {
 }
 
 .screen-layout > .card {
-  max-width: 480px;
+  max-width: 560px;
 }
 
 /* Screen toolbar */
@@ -626,4 +649,112 @@ textarea {
   .log-drawer {
     width: 100%;
   }
+}
+
+/* API doc-style editor */
+.api-endpoint-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f3f4f6;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+
+.api-method-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.api-method-badge.post {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.api-method-badge.patch {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.api-endpoint-path {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  color: #333;
+}
+
+.api-body-label {
+  display: block;
+  padding: 6px 14px;
+  background: #2a2a3c;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.api-json-editor {
+  width: 100%;
+  min-height: 280px;
+  padding: 12px 14px;
+  background: #1e1e2e;
+  color: #a0f0a0;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-bottom: none;
+  resize: vertical;
+  outline: none;
+  tab-size: 2;
+}
+
+.api-json-editor:focus {
+  box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.3);
+}
+
+.api-request-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f3f4f6;
+  border: 1px solid #e0e0e0;
+  border-radius: 0 0 8px 8px;
+}
+
+.api-send-btn {
+  padding: 8px 20px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.api-send-btn:hover {
+  opacity: 0.85;
+}
+
+.api-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.api-content-type {
+  font-size: 12px;
+  color: #999;
+  font-family: 'SF Mono', 'Fira Code', monospace;
 }

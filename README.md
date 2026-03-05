@@ -52,18 +52,17 @@ Browser (public/)              Express Server (server.js)              Tenalet A
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `TENALET_API_URL` | Tenalet API base URL | `https://api.tenalet.com` |
-| `TENALET_APP_URL` | Tenalet app URL (serves `embed.js`) | `https://app.tenalet.com` |
-| `TENALET_API_KEY` | Your partner API key | — |
+| `TENALET_API_KEY` | Your partner API key (test or live) | — |
 | `TENALET_WEBHOOK_SECRET` | Webhook signature secret | — |
 | `PORT` | Local server port | `3500` |
 
-For local development against a local Tenalet instance, override the URLs:
+### Test vs Live keys
 
-```bash
-TENALET_API_URL=http://localhost:3000
-TENALET_APP_URL=http://localhost:3001
-```
+New partners start in **sandbox mode** with a test key (`tnlt_pk_test_...`). Test keys create sandbox data that doesn't affect production. When you're ready to go live, ask your Tenalet admin to provision a live key (`tnlt_pk_live_...`).
+
+The demo auto-detects the key mode and shows a **SANDBOX** or **LIVE** badge in the nav bar.
+
+Both the API URL (`https://api.tenalet.com`) and embed app URL (`https://app.tenalet.com`) are hardcoded in `server.js`. Edit them there if needed for local development.
 
 ## Webhook Testing
 

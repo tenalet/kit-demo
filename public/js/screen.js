@@ -10,10 +10,14 @@
 
   const formCard = document.getElementById('tenant-form-card');
   const embedView = document.getElementById('embed-view');
-  const form = document.getElementById('tenant-form');
+  const jsonEditor = document.getElementById('app-json');
+  const sendBtn = document.getElementById('start-btn');
   const errorEl = document.getElementById('screen-error');
   const logEl = document.getElementById('event-log');
   const toletNameEl = document.getElementById('tolet-name');
+  const endpointPathEl = document.getElementById('app-endpoint-path');
+
+  enableTabInEditor(jsonEditor);
 
   // Drawer elements
   const logDrawer = document.getElementById('log-drawer');
@@ -76,6 +80,11 @@
   function showEmbedView() {
     formCard.classList.add('hidden');
     embedView.classList.remove('hidden');
+  }
+
+  // Update dynamic endpoint path
+  if (toletId) {
+    endpointPathEl.textContent = '/tolets/' + toletId + '/applications';
   }
 
   // Load tolet name
@@ -143,21 +152,26 @@
     return div.innerHTML;
   }
 
-  // Submit tenant form → create application → load embed
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  // Submit JSON → create application → load embed
+  sendBtn.addEventListener('click', async function () {
     errorEl.classList.add('hidden');
 
-    var body = {
-      externalUserId: document.getElementById('externalUserId').value.trim(),
-      firstName: document.getElementById('firstName').value.trim() || undefined,
-      lastName: document.getElementById('lastName').value.trim() || undefined,
-      phone: document.getElementById('phone').value.trim() || undefined,
-    };
+    var body;
+    try {
+      body = JSON.parse(jsonEditor.value);
+    } catch (err) {
+      showError('Invalid JSON: ' + err.message);
+      return;
+    }
 
-    var btn = document.getElementById('start-btn');
-    btn.disabled = true;
-    btn.textContent = 'Creating application...';
+    // Validate required fields
+    if (!body.externalUserId || typeof body.externalUserId !== 'string' || !body.externalUserId.trim()) {
+      showError('"externalUserId" is required');
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
 
     try {
       var result = await api('POST', '/tolets/' + toletId + '/applications', body);
@@ -175,8 +189,8 @@
       await loadEmbed(result);
     } catch (err) {
       showError(err.message);
-      btn.disabled = false;
-      btn.textContent = 'Start Screening';
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send Request';
     }
   });
 

@@ -6,11 +6,12 @@ const path = require('path');
 
 const app = express();
 
-const API_URL = process.env.TENALET_API_URL || 'http://localhost:3000';
-const APP_URL = process.env.TENALET_APP_URL || 'http://localhost:3001';
+const API_URL = 'https://api.tenalet.com'; // Hardcoded — edit here for local development
+const APP_URL = 'https://app.tenalet.com'; // Hardcoded — edit here for local development
 const API_KEY = process.env.TENALET_API_KEY || '';
 const WEBHOOK_SECRET = process.env.TENALET_WEBHOOK_SECRET || '';
 const PORT = parseInt(process.env.PORT || '3500', 10);
+const API_KEY_MODE = API_KEY.startsWith('tnlt_pk_test_') ? 'test' : 'live';
 
 // --- In-memory webhook store ---
 const webhookEvents = [];
@@ -75,7 +76,7 @@ app.get('/api/webhooks', (_req, res) => {
 
 // --- Config endpoint ---
 app.get('/api/config', (_req, res) => {
-  res.json({ appUrl: APP_URL });
+  res.json({ appUrl: APP_URL, mode: API_KEY_MODE });
 });
 
 // --- Generic proxy helper ---
@@ -166,6 +167,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- Start ---
 app.listen(PORT, () => {
   console.log(`Tenalet Kit demo running at http://localhost:${PORT}`);
-  console.log(`  API proxy → ${API_URL}`);
-  console.log(`  App URL   → ${APP_URL}`);
+  console.log(`  API proxy  → ${API_URL}`);
+  console.log(`  Embed URL  → ${APP_URL}`);
+  console.log(`  Mode       → ${API_KEY_MODE}`);
 });

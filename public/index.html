@@ -9,6 +9,7 @@
 <body>
   <nav>
     <a href="/" class="brand">Tenalet Kit Demo</a>
+    <span id="mode-badge" class="mode-badge"></span>
     <a href="/" class="active">Dashboard</a>
     <a href="/webhooks.html">Webhooks</a>
   </nav>
@@ -18,57 +19,44 @@
       <!-- Left: Create Tolet -->
       <div class="card">
         <h2>Create Tolet</h2>
-        <form id="create-form">
-          <label for="street">Street *</label>
-          <input type="text" id="street" required placeholder="123 Main Street">
-
-          <label for="unit">Unit</label>
-          <input type="text" id="unit" placeholder="Apt 4B">
-
-          <label for="city">City *</label>
-          <input type="text" id="city" required placeholder="Ikeja">
-
-          <label for="state">State *</label>
-          <input type="text" id="state" required placeholder="Lagos">
-
-          <label for="role">Role *</label>
-          <select id="role">
-            <option value="landlord">Landlord</option>
-            <option value="agent">Agent</option>
-            <option value="property_manager">Property Manager</option>
-          </select>
-
-          <label for="landlordFirst">Owner First Name</label>
-          <input type="text" id="landlordFirst" placeholder="John">
-
-          <label for="landlordLast">Owner Last Name</label>
-          <input type="text" id="landlordLast" placeholder="Doe">
-
-          <label for="landlordEmail">Owner Email</label>
-          <input type="email" id="landlordEmail" placeholder="john@example.com">
-
-          <label>Screening Modules *</label>
-          <div class="checkbox-group">
-            <label><input type="checkbox" name="modules" value="rentalApplication" checked> Rental Application</label>
-            <label><input type="checkbox" name="modules" value="creditHistoryAndScore" id="mod-credit"> Credit History</label>
-            <label><input type="checkbox" name="modules" value="incomeVerification" id="mod-income" disabled> Income Verification <small style="color:#999">(requires Credit History)</small></label>
-          </div>
-
-          <label for="rentAmount">Rent Amount (₦)</label>
-          <input type="number" id="rentAmount" placeholder="1200000" min="5000" max="100000000">
-
-          <label for="rentFrequency">Rent Frequency</label>
-          <select id="rentFrequency">
-            <option value="yearly">Yearly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-
-          <label for="note">Property type</label>
-          <textarea id="note" placeholder="3-bedroom flat"></textarea>
-
-          <button type="submit" class="btn btn-primary mt-16">Create Property</button>
-          <div id="create-error" class="error hidden"></div>
-        </form>
+        <div class="api-endpoint-bar">
+          <span class="api-method-badge post">POST</span>
+          <span class="api-endpoint-path">/tolets</span>
+        </div>
+        <div class="api-body-label">Request Body</div>
+        <textarea id="create-json" class="api-json-editor">{
+  "property": {
+    "address": {
+      "street": "123 Main Street",
+      "unit": "Apt 4B",
+      "city": "Ikeja",
+      "state": "Lagos"
+    },
+    "role": "landlord",
+    "landlord": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com"
+    }
+  },
+  "requirements": {
+    "modules": [
+      "rentalApplication",
+      "creditHistoryAndScore"
+    ]
+  },
+  "note": "3-bedroom flat",
+  "rent": {
+    "amount": 1200000,
+    "frequency": "yearly"
+  },
+  "isAcceptingApplications": true
+}</textarea>
+        <div class="api-request-footer">
+          <span class="api-content-type">application/json</span>
+          <button id="create-send-btn" class="api-send-btn">Send Request</button>
+        </div>
+        <div id="create-error" class="error hidden"></div>
       </div>
 
       <!-- Right: Tolet List -->

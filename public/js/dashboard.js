@@ -1,7 +1,10 @@
 (function () {
-  const form = document.getElementById('create-form');
+  const jsonEditor = document.getElementById('create-json');
+  const sendBtn = document.getElementById('create-send-btn');
   const errorEl = document.getElementById('create-error');
   const listEl = document.getElementById('tolet-list');
+
+  enableTabInEditor(jsonEditor);
 
   function showError(msg) {
     errorEl.textContent = msg;
@@ -12,82 +15,72 @@
     errorEl.classList.add('hidden');
   }
 
-  // Gate income verification behind credit history
-  const creditCheckbox = document.getElementById('mod-credit');
-  const incomeCheckbox = document.getElementById('mod-income');
+  // Default JSON to reset to after successful creation
+  const defaultJson = jsonEditor.value;
 
-  creditCheckbox.addEventListener('change', () => {
-    if (!creditCheckbox.checked) {
-      incomeCheckbox.checked = false;
-      incomeCheckbox.disabled = true;
-    } else {
-      incomeCheckbox.disabled = false;
-    }
-  });
-
-  // Create property
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // Create tolet via JSON editor
+  sendBtn.addEventListener('click', async () => {
     clearError();
 
-    const modules = Array.from(
-      document.querySelectorAll('input[name="modules"]:checked')
-    ).map((el) => el.value);
-
-    if (modules.length === 0) {
-      showError('Select at least one screening module.');
+    let body;
+    try {
+      body = JSON.parse(jsonEditor.value);
+    } catch (err) {
+      showError('Invalid JSON: ' + err.message);
       return;
     }
 
-    const landlord = {};
-    const lFirst = document.getElementById('landlordFirst').value.trim();
-    const lLast = document.getElementById('landlordLast').value.trim();
-    const lEmail = document.getElementById('landlordEmail').value.trim();
-    if (lFirst) landlord.firstName = lFirst;
-    if (lLast) landlord.lastName = lLast;
-    if (lEmail) landlord.email = lEmail;
-
-    const rentAmount = document.getElementById('rentAmount').value;
-    const rent = rentAmount
-      ? { amount: Number(rentAmount), frequency: document.getElementById('rentFrequency').value }
-      : undefined;
-
-    const body = {
-      property: {
-        address: {
-          street: document.getElementById('street').value.trim(),
-          unit: document.getElementById('unit').value.trim() || undefined,
-          city: document.getElementById('city').value.trim(),
-          state: document.getElementById('state').value.trim(),
-        },
-        role: document.getElementById('role').value,
-      },
-      requirements: { modules },
-      note: document.getElementById('note').value.trim() || undefined,
-      rent,
-      isAcceptingApplications: true,
-    };
-
-    if (Object.keys(landlord).length > 0) {
-      body.property.landlord = landlord;
+    // Validate required fields
+    const errors = [];
+    if (!body.property || typeof body.property !== 'object') {
+      errors.push('"property" object is required');
+    } else {
+      const addr = body.property.address;
+      if (!addr || typeof addr !== 'object') {
+        errors.push('"property.address" object is required');
+      } else {
+        if (!addr.street) errors.push('"property.address.street" is required');
+        if (!addr.city) errors.push('"property.address.city" is required');
+        if (!addr.state) errors.push('"property.address.state" is required');
+      }
+      if (!body.property.role) {
+        errors.push('"property.role" is required');
+      } else if (!['landlord', 'agent', 'property_manager'].includes(body.property.role)) {
+        errors.push('"property.role" must be one of: landlord, agent, property_manager');
+      }
+    }
+    if (!body.requirements || !Array.isArray(body.requirements.modules) || body.requirements.modules.length === 0) {
+      errors.push('"requirements.modules" must be a non-empty array');
+    }
+    if (body.rent !== undefined) {
+      if (typeof body.rent !== 'object' || !body.rent) {
+        errors.push('"rent" must be an object with amount and frequency');
+      } else {
+        if (typeof body.rent.amount !== 'number' || body.rent.amount <= 0) {
+          errors.push('"rent.amount" must be a positive number');
+        }
+        if (body.rent.frequency && !['monthly', 'yearly'].includes(body.rent.frequency)) {
+          errors.push('"rent.frequency" must be "monthly" or "yearly"');
+        }
+      }
+    }
+    if (errors.length > 0) {
+      showError(errors.join('\n'));
+      return;
     }
 
-    const btn = form.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.textContent = 'Creating...';
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
 
     try {
       await api('POST', '/tolets', body);
-      form.reset();
-      // re-check defaults
-      document.querySelector('input[name="modules"][value="rentalApplication"]').checked = true;
-      incomeCheckbox.disabled = true;
+      jsonEditor.value = defaultJson;
       await loadTolets();
     } catch (err) {
       showError(err.message);
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Create Property';
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send Request';
     }
   });
 
